@@ -1,0 +1,186 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Workspace: Verify",
+			"type": "shell",
+			"command": "echo Workspace tasks initialized",
+			"isBackground": false,
+			"group": "build"
+		},
+		{
+			"label": "CQRS: Start Command Service (Node.js)",
+			"type": "shell",
+			"command": "node server.js",
+			"options": {
+				"cwd": "c:/Users/SOLIT/SOLIT/finalproject/backend/backend/node"
+			},
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "CQRS: Start Query Service (FastAPI)",
+			"type": "shell",
+			"command": "uvicorn app.main:app --host 127.0.0.1 --port 2025 --reload",
+			"options": {
+				"cwd": "c:/Users/SOLIT/SOLIT/finalproject/backend/backend"
+			},
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "CQRS: Start Both Services",
+			"dependsOrder": "parallel",
+			"dependsOn": [
+				"CQRS: Start Command Service (Node.js)",
+				"CQRS: Start Query Service (FastAPI)"
+			],
+			"group": "build"
+		},
+		{
+			"label": "CQRS: Start Production Services",
+			"type": "shell",
+			"command": "powershell.exe",
+			"args": [
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"start_cqrs_services.ps1"
+			],
+			"options": {
+				"cwd": "c:/Users/SOLIT/SOLIT/finalproject/backend"
+			},
+			"isBackground": false,
+			"group": "build"
+		},
+		{
+			"label": "Run: Node command service",
+			"type": "shell",
+			"command": "node server.js",
+			"options": {
+				"cwd": "c:/Users/SOLIT/SOLIT/finalproject/backend/backend/node"
+			},
+			"isBackground": true,
+			"problemMatcher": []
+		},
+		{
+			"label": "Run: FastAPI query service",
+			"type": "shell",
+			"command": "uvicorn app.main:app --host 127.0.0.1 --port 2025 --reload",
+			"options": {
+				"cwd": "c:/Users/SOLIT/SOLIT/finalproject/backend/backend"
+			},
+			"isBackground": true,
+			"problemMatcher": []
+		},
+		{
+			"label": "Generate bcrypt hashes (local)",
+			"type": "shell",
+			"command": "C:/Users/SOLIT/SOLIT/finalproject/backend/.venv/Scripts/python.exe",
+			"args": [
+				"scripts/hash_pwds.py"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "Run: Verify remote endpoints",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"scripts/verify_remote.ps1"
+			],
+			"isBackground": false,
+			"group": "build"
+		}
+		,
+		{
+			"label": "Run: Verify remote endpoints (prod)",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"scripts/verify_remote.ps1",
+				"-Profile",
+				"prod"
+			],
+			"isBackground": false,
+			"group": "build"
+		},
+		{
+			"label": "Run: Verify remote endpoints (qc)",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"scripts/verify_remote.ps1",
+				"-Profile",
+				"qc"
+			],
+			"isBackground": false,
+			"group": "build"
+		},
+		{
+			"label": "Run: Verify remote endpoints (wh)",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"scripts/verify_remote.ps1",
+				"-Profile",
+				"wh"
+			],
+			"isBackground": false,
+			"group": "build"
+		}
+		,
+		{
+			"label": "DB: Copy cloudtle -> topline",
+			"type": "shell",
+			"command": "npm.cmd",
+			"args": [
+				"run",
+				"db:copy-data",
+				"--",
+				"--source",
+				"cloudtle",
+				"--dest",
+				"topline"
+			],
+			"options": {
+				"cwd": "c:/Users/SOLIT/SOLIT/finalproject/backend/apiendpoint/node"
+			},
+			"isBackground": false,
+			"group": "build"
+		}
+		,
+		{
+			"label": "DB: Fetch schema from VM",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"scripts/get_vm_mysql_schema.ps1"
+			],
+			"isBackground": false,
+			"group": "build"
+		}
+	]
+}
