@@ -7,8 +7,8 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install production dependencies only
-RUN npm ci --only=production
+# Install dependencies
+RUN npm install --production
 
 # Copy application code
 COPY . .
@@ -17,5 +17,8 @@ COPY . .
 ENV PORT=8080
 ENV NODE_ENV=production
 
+# Expose port
+EXPOSE 8080
+
 # Start the service
-CMD ["npm", "start"]
+CMD ["node", "server.js"]
