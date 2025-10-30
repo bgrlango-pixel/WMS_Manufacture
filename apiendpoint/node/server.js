@@ -1,7 +1,7 @@
 /**
  * CQRS COMMAND SERVICE (Node.js)
  * Handles: POST, PUT, DELETE operations only
- * Port: 3108
+ * Port: 8080
  */
 // Robust env loader to handle differences between local and VM
 const fs = require('fs');
@@ -523,20 +523,35 @@ app.get('/errors', (req, res) => {
 // Apply CQRS error handling middleware
 app.use(cqrsErrorHandler);
 
-const PORT = process.env.PORT || 3108;
+const PORT = process.env.PORT || 8080;
 
+console.log('🔄 Starting server initialization...');
+console.log('📊 Environment variables:', {
+    NODE_ENV: process.env.NODE_ENV,
+    PORT: PORT,
+    DB_HOST: process.env.DB_HOST,
+    DB_NAME: process.env.DB_NAME,
+    CLOUD_SQL_CONNECTION_NAME: process.env.CLOUD_SQL_CONNECTION_NAME
+});
+
+// Start server first to handle health checks
+const server = app.listen(PORT, () => {
+    console.log(`🎯 Command Service running on port ${PORT}`);
+    console.log(`📝 Operations: POST, PUT, DELETE, PATCH`);
+    console.log(`🔗 Companion: Query Service on port 2025`);
+    console.log(`🏭 Pattern: CQRS - Command Side`);
+});
+
+// Then try to connect to database
+console.log('🔌 Attempting database connection...');
 sequelize.authenticate()
     .then(() => {
         console.log('✅ Database connection established');
-        console.log('🚀 Starting CQRS Command Service...');
-        app.listen(PORT, () => {
-            console.log(`🎯 Command Service running on port ${PORT}`);
-            console.log(`📝 Operations: POST, PUT, DELETE, PATCH`);
-            console.log(`🔗 Companion: Query Service on port 2025`);
-            console.log(`🏭 Pattern: CQRS - Command Side`);
-        });
+        console.log('🚀 CQRS Command Service fully initialized');
     })
     .catch(err => {
         console.error('❌ Database connection failed:', err);
-        process.exit(1);
+        console.error('Stack trace:', err.stack);
+        // Don't exit process, just log error
+        console.log('⚠️ Server will continue running without database connection');
     });

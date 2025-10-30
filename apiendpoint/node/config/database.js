@@ -15,16 +15,27 @@ for (const p of envCandidates) {
     }
 }
 
-const sequelize = new Sequelize(
-    process.env.DB_NAME,
-    process.env.DB_USER,
-    process.env.DB_PASSWORD,
-    {
-        host: process.env.DB_HOST,
-        port: process.env.DB_PORT || 3306,
-        dialect: 'mysql',
-        logging: false,
+let config = {
+    database: process.env.DB_NAME,
+    username: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT || 3306,
+    dialect: 'mysql',
+    logging: false,
+};
+
+// If running on Cloud Run, use Unix socket
+if (process.env.CLOUD_SQL_CONNECTION_NAME) {
+    config.dialectOptions = {
+        socketPath: `/cloudsql/${process.env.CLOUD_SQL_CONNECTION_NAME}`
+    };
+    // Use private IP if available
+    if (process.env.DB_PRIVATE_HOST) {
+        config.host = process.env.DB_PRIVATE_HOST;
     }
-);
+}
+
+const sequelize = new Sequelize(config);
 
 module.exports = sequelize;
